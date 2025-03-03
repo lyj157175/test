@@ -1,0 +1,76 @@
+邮箱：lyj157175@163.com
+
+
+
+
+
+2. CPT（Mlaw-72b-base）
+- 收集开源通用，代码，数学推理等高质量数据；收集领域中文法律法规，国际法，国际公约，中英文权威案例，书籍，论文，web数据等（原数据形式为pdf，docx，doc，图片，txt）;
+- 数据处理pipeline。包括规则和模型方式提取文本数据，启发式规则数据处理，数据分类，数据质量打分，数据去重等处理为最终训练文本；
+- qwen-7b上探索数据配比和训练方式（全参，lora）；
+- 使用10B的token数据（通用/领域/代码/数学按一定配比，中英1:1）在qwen2.5-7b-instruct和qwen2.5-72b-instruct完成cpt训练。
+- 退火训练：使用小学习率+大rope base+高精数据+IFT数据（5%）完成；
+
+
+
+
+- qwen系列小模型实验探索数据配比和训练方式；（通用，领域，代码，数学）和训练方式（全参，lora）
+- 基于qwen2.5-7b-instruct和qwen2.5-72b-instruct完成cpt训练。中英数据1:1，保留代码和数学数据，领域:数学:代码:通用 = 2:1:1:6,使用清洗的高质量15B的token；
+    （3b（12G）：1.5b（6G）：1.5b（6G）：9b（36G）， 一共15b token，60G的数据）
+    8*A100 80G全参在qwen2.5-7b-instruct上训练15天，2epoch，lr=1*e-5 
+- 退火训练：使用小学习率+高精数据完成；
+
+（3b（12G）：0.5b（2G）：0.5b（2G）：6b（24G）， 一共10b token，40G的数据）
+
+2. sft（Mlaw-72b-instruct）
+- 数据：assistant api合成数据；蒸馏GPT-4o和Llama3.1-70b数据
+- corner case不断迭代补充数据，优化模型效果
+- lr: 7*10-6  
+原始qwen的sft：long response，math，code，instruction following，resoning，model identity 
+
+
+
+mlaw-o1
+
+防止模型过度思考，学习根据问题复杂度调整推理深度：（https://novasky-ai.github.io/posts/reduce-overthinking/）
+1.采集PRM800K数据集中20k问题样本，并对样本难度标注为hard和esay。
+2.数据合成。QWQ-32B-Preview对20k样本分别生成8次响应，hard问题使用最长正确和最短错误响应作为正负样本，esay使用最短正确和最长正确来做正负样本对。
+3.针对正例进行响应改写。推理序列常包括多个解决方案，例如“或者...”、“但是等等...”或“让我重新考虑...”。使用qwen2.5-72b-instruct分解响应中的解，然后重写响应以仅包含第一个正确的子解和一个附加的子解，删除不必要的子解决方案，减少序列长度。同时保持模型长链推理结构。
+4.simpo或者dpo完成模型训练。 （iteration + rejection sampling）
+
+
+
+----------------------------------------
+
+通用汽车销售Multi-Agent
+
+
+-----------------------------------
+重点：数据配比（14），数据质量，多样性，学习率，优化器
+
+英文 Fineweb：https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu
+英文 pile：https://huggingface.co/datasets/EleutherAI/pile
+中文 SkyPile：https://huggingface.co/datasets/Skywork/SkyPile-150B
+中文 CCI：https://huggingface.co/datasets/BAAI/CCI2-Data
+代码 the-stack-v2：https://huggingface.co/datasets/bigcode/the-stack-v2-train-smol-ids
+
+模型大小很重要，数据配比很重要，学习率重要
+
+
+maritime-law 
+
+
+
+
+
+好的，面试官您好，我叫刘元杰，研究生毕业于上海同济大学，在研究生期间发表过两篇论文，同时获得过国家奖学金。
+毕业之后到目前为止有5年的NLP算法工程师经验，其中有两年的大模型算法工程师经验。
+
+这两年有参与过三个大模型相关的项目，第一是在上上家公司参与推出了第一个金融行业大模型无涯infinity-176b和inifinity-7b，当时在业界有不小的口碑；
+后面是在一家大模型创业公司参与了2个项目，一个是和公司的律师团队从0到1落地了海事航运领域第一个法律大模型产品船舶晓海，产品也已经在
+web，手机端，小程序进行了上线服务用户，同时产品也面向tob用户提供API接口；
+另外一个项目是结合公司原来的汽车业务和客户，打造了一款多智能体汽车销售项目，构建了汽车数据平台，同时完成昊铂汽车销售助手的私有化定制，并在昊铂内部完成上线和使用；
+
+以上就是我参与的三个大模型项目，大模型现在发展比较快，我自己也在一直保持学习，积极跟进最新技术发展和开源项目，后面我希望继续在大模型方向上进行职业发展，找一份大模型算法工程师的岗位；
+
+
